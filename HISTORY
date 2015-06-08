@@ -1,0 +1,11 @@
+Collision Detection Example Programs History
+============================================
+
+CollisionDetection 1.0:
+- First packaging
+
+CollisionDetection 1.1:
+- Proper packaging with additional files
+- Updated to current versions of supporting libraries.
+- Updated to current g++ compiler version (<= 4.4.5)
+

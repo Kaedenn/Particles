@@ -1,0 +1,46 @@
+========================================================================
+README for Collision Detection Example Programs 1.1
+Copyright (c) 2005-2012 Oliver Kreylos
+========================================================================
+
+Overview
+========
+
+The Collision Detection Example Programs are a driver for a data
+structure implementing efficient fully dynamic collision detection
+between moving hard spheres.
+
+Requirements
+============
+
+The Collision Detection Example Programs require glut.
+
+Installation Guide
+==================
+
+1. Download and unpack the Collision Detection Example Programs
+   tarball:
+   > curl http://idav.ucdavis.edu/~okreylos/ResDev/Balls/CollisionDetection-1.1.tar.gz | tar xfz -
+
+2. Build the Collision Detection Example Programs:
+   > make
+   If the build process succeeds, this will immediately run the main
+   driver program with default parameters.
+
+3. Run the main driver program:
+   ./CollisionBoxTest <number of small spheres>
+
+Using the main driver program
+=============================
+
+The main driver program, CollisionBoxTest, is a simple glut application
+simulating the interaction of a fixed number of small disks inside a
+box. A larger disk can be dragged by pressing and holding the left
+mouse button anywhere inside the display window.
+
+NOTE: The main program currently does not handle the special case when
+a set of small disks is compressed to the point where individual
+disks must overlap. In that case, it will enter an infinite loop trying
+to find a solution to an unsolvable problem. This can happen when the
+user drags the large disk into a corner of the box and catches one or
+more small disks in the resulting closed space.
