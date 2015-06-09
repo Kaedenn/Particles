@@ -9,16 +9,6 @@
 # fltk user interface definition files with extension .fld and link them
 # into the executable program as well.
 #
-# If the DEBUG variable is defined, e.g., by typing "make DEBUG=TRUE",
-# make will create the final program with all debugging information, and
-# save it as $(TARGET).debug. Object files and final program from
-# previous non-debug builds will not be clobbered, and vice versa.
-#
-# If the SHOWCOMMAND variable is defined, e.g., by typing
-# "make SHOWCOMMAND=TRUE", make will display the command lines it uses
-# to build the various targets; by default, it will only show what is
-# currently being built.
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
@@ -42,12 +32,8 @@
 # Program name
 TARGET = CollisionBoxTest
 
-# Default command line arguments to run built program
-DEFAULTARGS = 
-
 # List of external software packages used by program
-# For glut programs:
-PACKAGES = GLUT GL X11
+PACKAGES = GLUT GL
 # For Fltk programs:
 #PACKAGES = FLTK XFT GL X11
 
@@ -57,12 +43,16 @@ PACKAGES = GLUT GL X11
 #
 
 # Optimization flags
-ifdef DEBUG
+OPTFLAGS = -g -O0 -ggdb
+
+ifdef FAST
   # For debugging builds:
-  OPTFLAGS = -g -O0 -ggdb
-else
-  # For timing builds:
   OPTFLAGS = -g0 -O3
+endif
+
+ifdef PROF
+  # For profiling builds:
+  OPTFLAGS = -g -O0 -pg
 endif
 
 # Compilation flags for C source files
@@ -113,10 +103,10 @@ LD = g++
 
 # Directories where dependency and object files go
 DEPDIR = ./d
-ifdef DEBUG
-  OBJDIR = ./o/debug
-else
+ifdef FAST
   OBJDIR = ./o
+else
+  OBJDIR = ./o/debug
 endif
 
 # Directory where executable programs go
@@ -185,12 +175,7 @@ LIBS = $(patsubst %,-l%,$(foreach PACKAGE,$(PACKAGES),$($(PACKAGE)_LIBS)))
 
 # make rule to "compile" fluid user interface generator files into C++ source files:
 %.$(CPPHEADEREXT) %.$(CPPEXT): %.$(FLUIDEXT)
-ifdef SHOWCOMMAND
 	$(FLTK_BINDIR)/fluid -c -h $*.$(CPPHEADEREXT) -o $*.$(CPPEXT) $<
-else
-	@echo Compiling Fltk GUI file $<...
-	@$(FLTK_BINDIR)/fluid -c -h $*.$(CPPHEADEREXT) -o $*.$(CPPEXT) $<
-endif
 
 #
 # Rules and macros to compile C/C++ source files with on-the-fly dependency generation
@@ -207,12 +192,7 @@ CCFLAGS = $(OPTFLAGS) $(INCLUDEDIRS) $(CFLAGS)
 $(OBJDIR)/%.o: %.$(CEXT)
 	@mkdir -p $(DEPDIR)/$(*D)
 	@mkdir -p $(OBJDIR)/$(*D)
-ifdef SHOWCOMMAND
 	$(CCOMP) -MD -c -o $@ $(CCFLAGS) $<
-else
-	@echo Compiling $<...
-	@$(CCOMP) -MD -c -o $@ $(CCFLAGS) $<
-endif
 	@$(PROCESS_DEPFILE)
 	@rm -f $(DEPFILETEMPLATE)
 
@@ -221,28 +201,17 @@ CCPPFLAGS = $(OPTFLAGS) $(INCLUDEDIRS) $(CPPFLAGS)
 $(OBJDIR)/%.o: %.$(CPPEXT)
 	@mkdir -p $(DEPDIR)/$(*D)
 	@mkdir -p $(OBJDIR)/$(*D)
-ifdef SHOWCOMMAND
 	$(CPPCOMP) -MD -c -o $@ $(CCPPFLAGS) $<
-else
-	@echo Compiling $<...
-	@$(CPPCOMP) -MD -c -o $@ $(CCPPFLAGS) $<
-endif
 	@$(PROCESS_DEPFILE)
 	@rm -f $(DEPFILETEMPLATE)
 
 # make rule to build and run target by default:
-ifdef DEBUG
+ifndef FAST
   TARGETNAME = $(TARGET).debug
 else
   TARGETNAME = $(TARGET)
 endif
 target: $(TARGETNAME)
-#ifdef SHOWCOMMAND
-#	./$(TARGETNAME) $(DEFAULTARGS)
-#else
-#	@echo Running $(TARGETNAME)...
-#	./$(TARGETNAME) $(DEFAULTARGS)
-#endif
 
 # make rule to remove artifacts of compilation:
 .PHONY: clean
@@ -257,7 +226,7 @@ clean:
 .DEFAULT: ;
 
 # include all automatically generated dependency files:
-DEPFILES = $(shell find $(DEPDIR) -follow -name "*.d")
+DEPFILES = $(shell find $(DEPDIR) -follow -name "*.d" 2>/dev/null)
 include $(DEPFILES)
 
 #
@@ -283,9 +252,5 @@ CPP_OBJECTS = $(CPP_SOURCES:%.$(CPPEXT)=$(OBJDIR)/%.o)
 # make rule to build program from all object files:
 $(EXEDIR)/$(TARGETNAME): $(C_OBJECTS) $(CPP_OBJECTS)
 	@mkdir -p $(EXEDIR)/$(*D)
-ifdef SHOWCOMMAND
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBDIRS) $(LIBS)
-else
-	@echo Linking $@...
-	@$(LD) $(LDFLAGS) -o $@ $^ $(LIBDIRS) $(LIBS)
-endif
+

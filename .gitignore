@@ -28,5 +28,6 @@ d
 *.out
 *.app
 CollisionBoxTest
+CollisionBoxTest.debug
 CollisionBox
 runme.sh
