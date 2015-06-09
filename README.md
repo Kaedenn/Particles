@@ -22,17 +22,26 @@ and PROF targets use the same naming and will override the other.
 
 ## Running the driver program
 The target (either CollisionBoxTest.debug or CollisionBoxTest) accepts numerous
-command-line arguments:
-| Argument | Effect |
-| --------------------- | -------------------------------------- |
-| `--size <int>`          | The edge length of the simulation cube |
-| `--radius <int>`        | The radius of the interactive circle |
-| `-r <FLOAT>`            | Color of the particles, red component |
-| `-g <FLOAT>`            | Color of the particles, green component |
-| `-b <FLOAT>`            | Color of the particles, blue component |
-| `--gravity <FLOAT>`     | Strength of the downward gravity (default is off) |
-| `--friction <FLOAT>`    | Strength of the frictional force (default is off) |
-| `--speedrange <FLOAT>`  | Maximum speed for the randomly-generated particles |
-| `--stopped`             | All particles start frozen. Equivalent to `--speedrange 0` |
-| `--fps`                 | Display the FPS to the console |
-| `--particle-gravity`    | Simulate gravity between the small particles |
+command-line arguments
+
+`--size <int>`         The edge length of the simulation cube
+
+`--radius <int>`       The radius of the interactive circle
+
+`-r <FLOAT>`           Color of the particles, red component
+
+`-g <FLOAT>`           Color of the particles, green component
+
+`-b <FLOAT>`           Color of the particles, blue component
+
+`--gravity <FLOAT>`    Strength of the downward gravity (default is off)
+
+`--friction <FLOAT>`   Strength of the frictional force (default is off)
+
+`--speedrange <FLOAT>` Maximum speed for the randomly-generated particles
+
+`--stopped`            All particles start frozen. Equivalent to `--speedrange 0`
+
+`--fps`                Display the FPS to the console
+
+`--particle-gravity`   Simulate gravity between the small particles
