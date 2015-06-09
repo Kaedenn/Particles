@@ -16,7 +16,7 @@ Copyright (c) 2005 Oliver Kreylos
 #include <Geometry/Box.h>
 
 #include <Extra/Debug.h>
-#include <vector>
+#include <list>
 
 template <class ScalarParam, int dimensionParam>
 class CollisionBox
@@ -197,7 +197,7 @@ private:
         Particle* p2;
     };
 
-    typedef std::vector<ParticlePair> ParticlePairs;
+    typedef Misc::ChunkedArray<ParticlePair> ParticlePairs;
 
     ParticlePairs particlePairs;
 
@@ -220,9 +220,8 @@ private:
     Scalar sphereTimeStamp; // Time stamp of spherical obstacle in current time step
     Vector latentForce; // Force (e.g. gravity) to apply to the particles at every step
     Scalar boxFriction; // Latent friction applied to all particles
+    bool intraParticleGravitation; // Whether or not to simulate gravity between particles
 
-    int debugMode; // 0 is normal. 1 is verbose. 2 is very verbose.
-    
     /* Private methods: */
     void queueCollisionsInCell(GridCell* cell, Particle* particle1, Scalar timeStep,
                                bool symmetric, Particle* otherParticle,
@@ -241,37 +240,27 @@ public:
     ~CollisionBox(void); // Destroys collision box and all particles
     
     /* Methods: */
-    const Box& getBoundaries(void) const // Returns the collision box's boundaries
-    {
+    const Box& getBoundaries(void) const { // Returns the collision box's boundaries
         return boundaries;
     }
     void setAttenuation(Scalar newAttenuation); // Sets new attenuation factor for particle velocities
     bool addParticle(const Point& newPosition, const Vector& newVelocity); // Adds a new particle to the collision box; returns false if particle could not be added due to overlap with existing particles
     void moveSphere(const Point& newPosition, Scalar timeStep); // Moves the spherical obstacle to the given position at the end of the next time step
     void simulate(Scalar timeStep); // Advances simulation time by given time step
-    void setLatentForce(const Vector& force)
-    {
+    void setLatentForce(const Vector& force) {
         latentForce = force;
     }
-    void setFriction(const Scalar& friction)
-    {
+    void setFriction(const Scalar& friction) {
         boxFriction = friction;
     }
-    const ParticleList& getParticles(void) const // Returns the list of particles
-    {
+    void setIntraParticleGravitation(bool enable) {
+        intraParticleGravitation = enable;
+    }
+    const ParticleList& getParticles(void) const { // Returns the list of particles
         return particles;
     }
-    const Point& getSphere(void) const // Returns the collision sphere's current position
-    {
+    const Point& getSphere(void) const { // Returns the collision sphere's current position
         return spherePosition;
-    }
-    void setDebug(int debug)
-    {
-        debugMode = debug;
-    }
-    int getDebug() const
-    {
-        return debugMode;
     }
 };
 

@@ -206,7 +206,8 @@ CollisionBox<ScalarT, dimN>::CollisionBox(
      sphereRadius(sSphereRadius),sphereRadius2(Math::sqr(sphereRadius)),
      sphereTimeStamp(0),
      latentForce(0),
-     boxFriction(0)
+     boxFriction(0),
+     intraParticleGravitation(false)
 {
     /* Calculate optimal number of cells and cell sizes: */
     Index numOuterCells;
@@ -246,13 +247,8 @@ CollisionBox<ScalarT, dimN>::CollisionBox(
         numNeighbors*=3;
     neighborOffsets=new ssize_t[numNeighbors];
     cellChangeMasks=new int[numNeighbors];
-    Index minBound;
-    Index maxBound;
-    for (int i=0;i<dimension;++i)
-    {
-        minBound[i]=-1;
-        maxBound[i]=2;
-    }
+    Index minBound(-1);
+    Index maxBound(2);
     int neighborIndex=0;
     for (Index index=minBound;index[0]<maxBound[0];index.preInc(minBound,maxBound),++neighborIndex)
     {
@@ -321,7 +317,7 @@ CollisionBox<ScalarT, dimN>::addParticle(
         for (Particle* pPtr=neighborCell->particlesHead;pPtr!=0;pPtr=pPtr->cellSucc)
         {
             Scalar dist2=Geometry::sqrDist(pPtr->position,newP);
-            if (dist2<=Scalar(4)*particleRadius2)
+            if (dist2<=Scalar(2)*particleRadius2)
                 return false; // Could not add the particle
         }
     }
@@ -340,12 +336,6 @@ CollisionBox<ScalarT, dimN>::addParticle(
             particlePairs.push_back(ParticlePair(&p, &(*i)));
         }
     }
-    /*auto fn = [this, p](Particle& p0) {
-        if (&p != &p0) {
-            particlePairs.push_back(ParticlePair(&p, &p0));
-        }
-    };
-    particles.forEach(fn);*/
     
     return true; // Particle succesfully added
 }
@@ -470,9 +460,17 @@ CollisionBox<ScalarT, dimN>::simulate(
     };
     particles.forEach(fn);
 
-    auto particlePull = [this](ParticlePair& pair) {
-        Scalar dist = Geometry::dist(pair.p1->position, pair.p2->position);
-    };
+    if (intraParticleGravitation) {
+        auto particlePull = [this](ParticlePair& pair) {
+            Particle& p1 = *pair.p1;
+            Particle& p2 = *pair.p2;
+            Vector d = p1.position - p2.position;
+            Scalar dLen2 = Geometry::sqr(d);
+            p1.velocity -= d.normalize()/dLen2;
+            p2.velocity += d.normalize()/dLen2;
+        };
+        particlePairs.forEach(particlePull);
+    }
     
     /* Update the collision sphere to the end of the time step: */
     spherePosition+=sphereVelocity*(timeStep-sphereTimeStamp);

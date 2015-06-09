@@ -22,6 +22,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <stdexcept>
 #include <iostream>
 #include <strings.h>
+#include <ctime>
 #include <Misc/Timer.h>
 #include <Math/Math.h>
 #include <Math/Constants.h>
@@ -99,6 +100,7 @@ CollisionBoxTest::CollisionBoxTest(int& argc, char**& argv)
     Scalar friction = 0;
     Scalar speedRange = 4.0;
     bool stopped = false;
+    bool particleGravity = false;
     for (int argi = 1; argi < argc; ++argi) {
         if (argv[argi][0] == '-') {
             /* Parameters with values */
@@ -127,6 +129,8 @@ CollisionBoxTest::CollisionBoxTest(int& argc, char**& argv)
                 speedRange = 0.0;
             } else if (!strcasecmp(argv[argi], "--fps")) {
                 showFps = true;
+            } else if (!strcasecmp(argv[argi], "--particle-gravity")) {
+                particleGravity = true;
             }
         } else {
             /* Unnamed parameter */
@@ -140,7 +144,10 @@ CollisionBoxTest::CollisionBoxTest(int& argc, char**& argv)
     collisionBox = new MyCollisionBox(Box(min, max), particleRadius, sphereRadius);
     collisionBox->setLatentForce(latentForce);
     collisionBox->setFriction(friction);
+    collisionBox->setIntraParticleGravitation(particleGravity);
     spherePosition = collisionBox->getSphere();
+
+    std::srand(std::time(NULL));
     
     /* Create a few particles: */
     const Box& boundaries = collisionBox->getBoundaries();
