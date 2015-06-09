@@ -33,117 +33,125 @@ Methods of class GlutApplication:
 ********************************/
 
 void GlutApplication::reshapeFunction(int newWidth,int newHeight)
-	{
-	/* Call reshape method of the global glut application object: */
-	globalApplicationObject->reshape(newWidth,newHeight);
-	}
+{
+    /* Call reshape method of the global glut application object: */
+    globalApplicationObject->reshape(newWidth,newHeight);
+}
 
 void GlutApplication::displayFunction(void)
-	{
-	/* Call display method of the global glut application object: */
-	globalApplicationObject->display();
-	}
+{
+    /* Call display method of the global glut application object: */
+    globalApplicationObject->display();
+}
 
 void GlutApplication::keyboardFunction(unsigned char key,int x,int y)
-	{
-	/* Call keyboard method of the global glut application object: */
-	globalApplicationObject->keyboard(key,x,y);
-	}
+{
+    /* Call keyboard method of the global glut application object: */
+    globalApplicationObject->keyboard(key,x,y);
+}
 
 void GlutApplication::mouseFunction(int button,int state,int x,int y)
-	{
-	/* Call mouse method of the global glut application object: */
-	globalApplicationObject->mouse(button,state,x,y);
-	}
+{
+    /* Call mouse method of the global glut application object: */
+    globalApplicationObject->mouse(button,state,x,y);
+}
 
 void GlutApplication::motionFunction(int x,int y)
-	{
-	/* Call motion method of the global glut application object: */
-	globalApplicationObject->motion(x,y);
-	}
+{
+    /* Call motion method of the global glut application object: */
+    globalApplicationObject->motion(x,y);
+}
 
 void GlutApplication::idleFunction(void)
-	{
-	/* Call idle method of the global glut application object: */
-	globalApplicationObject->idle();
-	}
+{
+    /* Call idle method of the global glut application object: */
+    globalApplicationObject->idle();
+}
 
 void GlutApplication::setDisplayMode(unsigned int newDisplayMode)
-	{
-	displayMode=newDisplayMode;
-	}
+{
+    displayMode=newDisplayMode;
+}
 
 void GlutApplication::enableIdleFunction(void)
-	{
-	idleFunctionEnabled=true;
-	}
+{
+    idleFunctionEnabled=true;
+}
 
 GlutApplication::GlutApplication(const char* sApplicationName,int& argc,char**& argv)
-	:displayMode(GLUT_RGB),
-	 idleFunctionEnabled(false),
-	 applicationName(sApplicationName)
-	{
-	/* Initialize glut: */
-	glutInit(&argc,argv);
-	
-	/* Set the global application object pointer: */
-	globalApplicationObject=this;
-	}
+    :displayMode(GLUT_RGB),
+     idleFunctionEnabled(false),
+     applicationName(sApplicationName)
+{
+    /* Initialize glut: */
+    glutInit(&argc,argv);
+    
+    /* Set the global application object pointer: */
+    globalApplicationObject=this;
+}
 
 GlutApplication::~GlutApplication(void)
-	{
-	/* Reset the global application object pointer: */
-	globalApplicationObject=0;
-	}
+{
+    /* Reset the global application object pointer: */
+    globalApplicationObject=0;
+}
 
 void GlutApplication::run(int initialWidth,int initialHeight)
-	{
-	/* Create a glut window: */
-	glutInitDisplayMode(displayMode);
-	glutInitWindowSize(initialWidth,initialHeight);
-	glutCreateWindow(applicationName);
-	
-	/* Call the OpenGL initialization method: */
-	initOpenGLState();
-	
-	/* Register the glut callbacks: */
-	glutReshapeFunc(reshapeFunction);
-	glutDisplayFunc(displayFunction);
-	glutKeyboardFunc(keyboardFunction);
-	glutMouseFunc(mouseFunction);
-	glutMotionFunc(motionFunction);
-	if(idleFunctionEnabled)
-		glutIdleFunc(idleFunction);
-	
-	/* Execute the glut main loop: */
-	glutMainLoop();
-	}
+{
+    /* Create a glut window: */
+    glutInitDisplayMode(displayMode);
+    glutInitWindowSize(initialWidth,initialHeight);
+    glutCreateWindow(applicationName);
+    
+    /* Call the OpenGL initialization method: */
+    initOpenGLState();
+    
+    /* Register the glut callbacks: */
+    glutReshapeFunc(reshapeFunction);
+    glutDisplayFunc(displayFunction);
+    glutKeyboardFunc(keyboardFunction);
+    glutMouseFunc(mouseFunction);
+    glutMotionFunc(motionFunction);
+    if(idleFunctionEnabled)
+        glutIdleFunc(idleFunction);
+    
+    /* Execute the glut main loop: */
+    glutMainLoop();
+}
 
 void GlutApplication::initOpenGLState(void)
-	{
-	}
+{
+}
 
 void GlutApplication::reshape(int newWidth,int newHeight)
-	{
-	}
+{
+    (void)newWidth;
+    (void)newHeight;
+}
 
 void GlutApplication::display(void)
-	{
-	}
+{
+}
 
 void GlutApplication::keyboard(unsigned char key,int x,int y)
-	{
+{
     globalApplicationObject->keyboard(key,x,y);
-	}
+}
 
 void GlutApplication::mouse(int button,int state,int x,int y)
-	{
-	}
+{
+    (void)button;
+    (void)state;
+    (void)x;
+    (void)y;
+}
 
 void GlutApplication::motion(int x,int y)
-	{
-	}
+{
+    (void)x;
+    (void)y;
+}
 
 void GlutApplication::idle(void)
-	{
-	}
+{
+}

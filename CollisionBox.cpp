@@ -69,29 +69,24 @@ CollisionBox<ScalarT, dimN>::queueCellChanges(
     GridCell* cell=particle->cell;
     Scalar cellChangeTime=timeStep;
     int cellChangeDirection=-1;
-    for (int i=0;i<dimension;++i)
-    {
-        if (newPosition[i]<cell->boundaries.min[i])
-        {
+    for (int i=0;i<dimension;++i) {
+        if (newPosition[i]<cell->boundaries.min[i]) {
             Scalar collisionTime=particle->timeStamp+(cell->boundaries.min[i]-particle->position[i])/particle->velocity[i];
-            if (cellChangeTime>collisionTime)
-            {
+            if (cellChangeTime>collisionTime) {
                 cellChangeTime=collisionTime;
                 cellChangeDirection=2*i+0;
             }
-        }
-        else if (newPosition[i]>cell->boundaries.max[i])
-        {
+        } else if (newPosition[i]>cell->boundaries.max[i]) {
             Scalar collisionTime=particle->timeStamp+(cell->boundaries.max[i]-particle->position[i])/particle->velocity[i];
-            if (cellChangeTime>collisionTime)
-            {
+            if (cellChangeTime>collisionTime) {
                 cellChangeTime=collisionTime;
                 cellChangeDirection=2*i+1;
             }
         }
     }
-    if (cellChangeDirection>=0)
+    if (cellChangeDirection>=0) {
         collisionQueue.insert(CollisionEvent(cellChangeTime,particle,cellChangeDirection));
+    }
 }
 
 template <class ScalarT, int dimN>
